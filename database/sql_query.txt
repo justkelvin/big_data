@@ -1,0 +1,13 @@
+CREATE TABLE first_level_dictionary_table(
+	id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    term VARCHAR(255) NOT NULL,
+    documentFrequency VARCHAR(255) NOT NULL,
+    collectionFrequency int(11) NULL
+);
+
+CREATE TABLE second_level_posting_table(
+	id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    term VARCHAR(255) NOT NULL,
+    documentId VARCHAR(255) NOT NULL,
+    termFrequency int(11) NULL
+);
