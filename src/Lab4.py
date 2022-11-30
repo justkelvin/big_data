@@ -1,22 +1,27 @@
 #!/usr/bin/env python3
 
 # Imports
-import importlib
-import os
-import re
+try:
+    import importlib
+    import os
+    import re
 
-import nltk
-import numpy
-import numpy.linalg as LA
-import pandas as pd
-from bs4 import BeautifulSoup as BS
-from config import Database as DB
-from dotenv import load_dotenv
-from nltk.stem import PorterStemmer
-from num2words import num2words
-from numpy import dot
-from numpy.linalg import norm
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+    import nltk
+    import numpy
+    import numpy.linalg as LA
+    import pandas as pd
+    from bs4 import BeautifulSoup as BS
+    from config import Database as DB
+    from dotenv import load_dotenv
+    from nltk.stem import PorterStemmer
+    from num2words import num2words
+    from numpy import dot
+    from numpy.linalg import norm
+    from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+    from colorama import Fore, Back, Style
+except ModuleNotFoundError:
+    print(Fore.RED + "ModuleNotFoundError: Please run the following command to install the required modules: pip install -r requirements.txt" + Style.RESET_ALL)
+    exit()
 
 # Load the .env file
 load_dotenv()
@@ -53,12 +58,12 @@ class Lab4:
         DOCUMENT_DICT = self.raw_document()
         
         # Preprocess the document
-        print("\nDocument preprocessing. Please wait...\n")
+        print(Fore.GREEN + "[-] Document preprocessing." + Style.RESET_ALL)
 
         for key, value in DOCUMENT_DICT.items():
             self.PREPROCESSED_DOCUMENT[key] = self.preprocessor(value)
 
-        print("Document preprocessing completed.\n")
+        print(Fore.GREEN + "[+] Document preprocessing completed." + Style.RESET_ALL)
         self.build_up_inverted_index() 
     
     def nltk_check(self):
@@ -69,13 +74,13 @@ class Lab4:
         
         # Download the nltk packages if not installed already
         if stopwords is None:
-            nltk.download('stopwords')
+            nltk.download('stopwords', quiet=True)
         
         if punkt is None:
-            nltk.download('punkt')
+            nltk.download('punkt', quiet=True)
 
         if wordnet is None:
-            nltk.download("wordnet")
+            nltk.download("wordnet", quiet=True)
 
     def raw_document(self):
         """ Get the raw document """
@@ -132,7 +137,7 @@ class Lab4:
     def build_up_inverted_index(self):
         """ Build up the inverted index """
 
-        print("Building Inverted Index Tables. Please wait...\n")
+        print(Fore.GREEN + "[-] Building Inverted Index Tables." + Style.RESET_ALL)
 
         # Get the preprocessed document
         TF_DF = {}
@@ -150,7 +155,7 @@ class Lab4:
         df = pd.DataFrame.from_dict(TF_DF, orient='index')
         df = df.replace(numpy.nan, 0)
         df.to_csv("./output/Document_Term_Df.csv")
-        print("Document Term DF Table saved to ./output/Document_Term_Df.csv\n")
+        print(Fore.GREEN + "[+] Document Term DF Table saved to ./output/Document_Term_Df.csv" + Style.RESET_ALL)
 
         DICTIONARY_FILE = {}
         POSTING_FILE = {} 
@@ -176,7 +181,7 @@ class Lab4:
         df.index.name = 'Term'
         df = df.replace(numpy.nan, 0)
         df.transpose().to_csv("./output/DictionaryFile.csv")
-        print("Dictionary File saved to ./output/DictionaryFile.csv")
+        print(Fore.GREEN + "[+] Dictionary File saved to ./output/DictionaryFile.csv" + Style.RESET_ALL)
 
         # Save the posting file
         data = pd.read_csv(f"./output/DictionaryFile.csv", encoding='utf-8')
@@ -190,13 +195,13 @@ class Lab4:
 
         if True:
             # Save the posting file
-            print("\nSuccessfully Posted First Level Dictionary Table!")
+            print(Fore.GREEN + "[+] Successfully Posted First Level Dictionary Table!" + Style.RESET_ALL)
         
         df = pd.DataFrame.from_dict(POSTING_FILE, orient='index')
         df.index.name = 'Term'
         df = df.replace(numpy.nan, 0)
         df.transpose().to_csv("./output/PostingFile.csv")
-        print("\nPosting File saved to ./output/PostingFile.csv")
+        print(Fore.GREEN + "[-] Posting File saved to ./output/PostingFile.csv" + Style.RESET_ALL)
         
         data = pd.read_csv(f"./output/PostingFile.csv", encoding='utf-8')
         df = pd.DataFrame(data, columns=['Term', 'Doc Id', 'TermFreq'])
@@ -208,7 +213,7 @@ class Lab4:
                 pass
         
         if True:
-            print("\nSuccessfully Posted Second Level Posting Table!")
+            print(Fore.GREEN + "[+] Successfully Posted Second Level Posting Table!" + Style.RESET_ALL)
     
         self.cursor.close()
         self.mydb.close()
@@ -229,7 +234,7 @@ class Lab4:
         """ Part 2 of the assignment """
 
         DOCUMENT_DICT = self.raw_document()
-        print("\nPreprocessing of the documents started. Please wait...\n")
+        print(Fore.GREEN + "[-] Preprocessing of the documents started. Please wait..." + Style.RESET_ALL)
         
         for key, value in DOCUMENT_DICT.items():
             processed_text = self.preprocessor(value)
@@ -256,11 +261,11 @@ class Lab4:
 
     def show_cosine_similarity(self, cosine_similarity_result):
         """ Show the cosine similarity """
-        print("Showing the cosine similarity. Please wait...\n")
+        print(Fore.GREEN + "[-] Showing the cosine similarity. Please wait..." + Style.RESET_ALL)
         DFrame = pd.DataFrame.from_dict(cosine_similarity_result, orient='index')
         DFrame = DFrame.replace(numpy.nan, 0)
         DFrame.to_csv("./output/Cosine_Similarity.csv")
-        print("Cosine Similarity Table saved to ./output/Cosine_Similarity.csv")
+        print(Fore.GREEN + "[+] Cosine Similarity Table saved to ./output/Cosine_Similarity.csv" + Style.RESET_ALL)
     
     def find_cosine_similarity(self, a, b):
         """ Find the cosine similarity """
